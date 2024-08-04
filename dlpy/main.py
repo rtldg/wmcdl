@@ -8,34 +8,6 @@ import yt_dlp
 
 app = Flask(__name__)
 
-last_filename = ''
-last_title = ''
-
-def my_hook(d):
-    global last_filename
-    global last_title
-    if d['status'] == 'finished':
-        last_filename = d['filename'].rsplit('.', 1)[0] + '.ogg'
-        last_title = d['info_dict']['uploader'] + ' - ' + d['info_dict']['title']
-        print(f'last_filename = {last_filename} | last_title = {last_title}')
-
-# yt-dlp.exe --format bestaudio --extract-audio --audio-format ogg <url>
-# https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/YoutubeDL.py#L214
-ydl_opts = {
-    'keepvideo': True, # stop redownloading so much sometimes...
-    'format': 'ogg/bestaudio/best',
-    'outtmpl': '[%(id)s].%(ext)s',
-    # ℹ️ See help(yt_dlp.postprocessor) for a list of available Postprocessors and their arguments
-    'postprocessors': [{  # Extract audio using ffmpeg
-        'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'vorbis',
-    }],
-    'paths': {
-        'home': '/public_html/media/',
-    },
-    'progress_hooks': [my_hook],
-}
-
 def get_media_duration(filename):
     print(f'attempting to ffprobe {filename}')
     try:
@@ -59,14 +31,38 @@ def ss_media(filename, startat):
 
 @app.route('/GAOGAOGAO', methods=['POST'])
 def download_as_mp3():
-    global last_filename
-    global last_title
     url = request.form['url']
     startat = request.form.get('startat')
     print(f'startat = {startat}')
     #for k in request.form:
     #    print(f'\'{k}\' = \''+request.form[k]+'\'')
     print(f'hello with {url}')
+
+    last_filename = ''
+    last_title = ''
+
+    def my_hook(d):
+        if d['status'] == 'finished':
+            last_filename = d['filename'].rsplit('.', 1)[0] + '.ogg'
+            last_title = d['info_dict']['uploader'] + ' - ' + d['info_dict']['title']
+            print(f'last_filename = {last_filename} | last_title = {last_title}')
+    # yt-dlp.exe --format bestaudio --extract-audio --audio-format ogg <url>
+    # https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/YoutubeDL.py#L214
+    ydl_opts = {
+        'keepvideo': True, # stop redownloading so much sometimes...
+        'format': 'ogg/bestaudio/best',
+        'outtmpl': '[%(id)s].%(ext)s',
+        # ℹ️ See help(yt_dlp.postprocessor) for a list of available Postprocessors and their arguments
+        'postprocessors': [{  # Extract audio using ffmpeg
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'vorbis',
+        }],
+        'paths': {
+            'home': '/public_html/media/',
+        },
+        'progress_hooks': [my_hook],
+    }
+
     # https://github.com/yt-dlp/yt-dlp?tab=readme-ov-file#embedding-yt-dlp
     # TODO: Pick a random IPV6 'source_address' for ydl_opts
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -82,8 +78,6 @@ def download_as_mp3():
             'Title': last_title,
             'Duration': get_media_duration(last_filename),
         }
-        last_filename = ''
-        last_title = ''
         return j, 200
     else:
         # POST to discord webhook.
