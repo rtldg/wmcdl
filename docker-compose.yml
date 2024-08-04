@@ -1,0 +1,26 @@
+services:
+  #tunnel:
+  #  image: cloudflare/cloudflared
+  #  restart: unless-stopped
+  #  command: tunnel --url http://caddy:8001
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./caddy_config:/config
+      - ./caddy_data:/data
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./public_html:/public_html
+    ports:
+      - "80:80"
+      - "443:443"
+    #  - "443:443/udp"
+    #  - "8001:8001"
+  dlpy:
+    build: dlpy
+    restart: unless-stopped
+    volumes:
+      - ./public_html:/public_html
+      - ./dlpy/main.py:/app/main.py

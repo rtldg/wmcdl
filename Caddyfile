@@ -1,0 +1,10 @@
+{
+	#debug
+}
+
+your.domain.example.org {
+	root * /public_html
+	file_server
+	#file_server browse
+	reverse_proxy /GAOGAOGAO dlpy:8888
+}

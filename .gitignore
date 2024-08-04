@@ -1,0 +1,10 @@
+public_html/media/*
+!public_html/media/z.txt
+
+caddy_config/*
+!caddy_config/z.txt
+
+caddy_data/*
+!caddy_data/z.txt
+
+.env
