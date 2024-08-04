@@ -1,5 +1,4 @@
 
-
 Edits...
 - `Caddyfile`
 	- Use your domain instead of `your.domain.example.org`
@@ -8,5 +7,6 @@ Edits...
 - `dlpy/main.py`
 	- `@app.route('/GAOGAOGAO', methods=['POST'])`
 		- edit the `/GAOGAOGAO` to that same random string in `Caddyfile`
+
 Running...
 - `docker compose up -d`
