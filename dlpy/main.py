@@ -1,4 +1,5 @@
 
+import sys
 import os
 import subprocess
 from pathlib import Path
@@ -9,16 +10,16 @@ import yt_dlp
 app = Flask(__name__)
 
 def get_media_duration(filename):
-    print(f'attempting to ffprobe {filename}')
+    print(f'attempting to ffprobe {filename}', file=sys.stderr)
     try:
         r = subprocess.check_output(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', filename])
         return float(r.decode('utf-8'))
     except:
-        print('get_media_duration failed...')
+        print('get_media_duration failed...', file=sys.stderr)
         return 0.0
 
 def ss_media(filename, startat):
-    print(f'attempting to start media at {startat}')
+    print(f'attempting to start media at {startat}', file=sys.stderr)
     try:
         tempf = Path(filename)
         tempf = tempf.with_name('TEMP'+tempf.name)
@@ -26,17 +27,17 @@ def ss_media(filename, startat):
         r = subprocess.check_output(['ffmpeg', '-ss', str(int(startat)), '-i', filename, '-map', '0', '-c', 'copy', tempf.as_posix()])
         os.replace(tempf, filename)
     except:
-        print('ss_media failed...')
+        print('ss_media failed...', file=sys.stderr)
         pass
 
 @app.route('/GAOGAOGAO', methods=['POST'])
 def download_as_mp3():
     url = request.form['url']
     startat = request.form.get('startat')
-    print(f'startat = {startat}')
+    print(f'startat = {startat}', file=sys.stderr)
     #for k in request.form:
     #    print(f'\'{k}\' = \''+request.form[k]+'\'')
-    print(f'hello with {url}')
+    print(f'hello with {url}', file=sys.stderr)
 
     last_filename = ''
     last_title = ''
@@ -45,7 +46,7 @@ def download_as_mp3():
         if d['status'] == 'finished':
             last_filename = d['filename'].rsplit('.', 1)[0] + '.ogg'
             last_title = d['info_dict']['uploader'] + ' - ' + d['info_dict']['title']
-            print(f'last_filename = {last_filename} | last_title = {last_title}')
+            print(f'last_filename = {last_filename} | last_title = {last_title}', file=sys.stderr)
     # yt-dlp.exe --format bestaudio --extract-audio --audio-format ogg <url>
     # https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/YoutubeDL.py#L214
     ydl_opts = {
@@ -78,6 +79,7 @@ def download_as_mp3():
             'Title': last_title,
             'Duration': get_media_duration(last_filename),
         }
+        print(j, file=sys.stderr)
         return j, 200
     else:
         # POST to discord webhook.
