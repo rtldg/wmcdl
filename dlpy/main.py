@@ -43,6 +43,8 @@ def download_as_mp3():
     last_title = ''
 
     def my_hook(d):
+        nonlocal last_filename
+        nonlocal last_title
         if d['status'] == 'finished':
             last_filename = d['filename'].rsplit('.', 1)[0] + '.ogg'
             last_title = d['info_dict']['uploader'] + ' - ' + d['info_dict']['title']
