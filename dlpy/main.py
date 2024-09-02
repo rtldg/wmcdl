@@ -34,6 +34,10 @@ def ss_media(filename, startat):
 def download_as_mp3():
     url = request.form['url']
     startat = request.form.get('startat')
+    try:
+        _ = int(startat)
+    except:
+        startat = None
     print(f'startat = {startat}', file=sys.stderr)
     #for k in request.form:
     #    print(f'\'{k}\' = \''+request.form[k]+'\'')
