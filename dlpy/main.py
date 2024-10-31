@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: WTFPL
 
 import sys
 import os
