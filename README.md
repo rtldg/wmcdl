@@ -1,18 +1,28 @@
-
-Edits...
-- `Caddyfile`
-	- Use your domain instead of `your.domain.example.org`
-	- `reverse_proxy /GAOGAOGAO dlpy:8888`
-		- edit the `/GAOGAOGAO` to some other random string
-- `dlpy/main.py`
-	- `@app.route('/GAOGAOGAO', methods=['POST'])`
-		- edit the `/GAOGAOGAO` to that same random string in `Caddyfile`
-
-Running...
+## Running...
+- make a `.env` file and fill it with:
+	```sh
+	MY_DOMAIN=your.domain.example.org
+	SECRET_ENDPOINT=/RANDOMSTRINGHERE
+	```
 - `docker compose up -d`
 
-Using...
-- `curl -X POST https://your.domain.example.org/GAOGAOGAO -d "url=https://www.youtube.com/watch?v=BaW_jenozKc&startat=3"`
+## Using...
+```sh
+curl -X POST https://your.domain.example.org/RANDOMSTRINGHERE -d "url=https://www.youtube.com/watch?v=BaW_jenozKc&startat=3"`
+```
 
-Updating...
-- `docker compose build --no-cache dlpy`
+## Updating...
+```sh
+# stop the server
+docker compose down
+# update latest repo changes
+git pull
+# update caddy
+docker compose pull
+
+# mainly this right here because this will update the yt-dlp version...
+docker compose build --no-cache dlpy
+
+# start it back up and detach so it runs in the background
+docker compose up -d
+```

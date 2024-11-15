@@ -8,6 +8,9 @@ services:
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
+    environment:
+      - MY_DOMAIN=${MY_DOMAIN}
+      - SECRET_ENDPOINT=${SECRET_ENDPOINT}
     volumes:
       - ./caddy_config:/config
       - ./caddy_data:/data
@@ -16,11 +19,11 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    #  - "443:443/udp"
-    #  - "8001:8001"
   dlpy:
     build: dlpy
     restart: unless-stopped
+    environment:
+      - SECRET_ENDPOINT=${SECRET_ENDPOINT}
     volumes:
       - ./public_html:/public_html
       - ./dlpy/main.py:/app/main.py

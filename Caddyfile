@@ -1,10 +1,12 @@
 {
 	#debug
+	#auto_https off
 }
 
-your.domain.example.org {
+{$MY_DOMAIN} {
 	root * /public_html
 	file_server
 	#file_server browse
-	reverse_proxy /GAOGAOGAO dlpy:8888
+	reverse_proxy {$SECRET_ENDPOINT} dlpy:8888
+	#reverse_proxy {$SECRET_ENDPOINT} localhost:8888 # testing things...
 }

@@ -31,7 +31,7 @@ def ss_media(filename, startat):
         print('ss_media failed...', file=sys.stderr)
         pass
 
-@app.route('/GAOGAOGAO', methods=['POST'])
+@app.route(os.environ["SECRET_ENDPOINT"], methods=['POST'])
 def download_as_mp3():
     url = request.form['url']
     startat = request.form.get('startat')
