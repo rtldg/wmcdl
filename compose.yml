@@ -1,0 +1,40 @@
+services:
+  tunnel:
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    # --loglevel debug
+    command: tunnel --no-autoupdate run --protocol http2 --token ${TUNNEL_TOKEN}
+  warp:
+    image: caomingjun/warp # https://github.com/cmj2002/warp-docker
+    restart: always
+    # SOCKS5 proxy...
+    #ports:
+    #  - "127.0.0.1:1080:1080"
+    environment:
+      - WARP_SLEEP=2
+      #- WARP_LICENSE_KEY= # optional for WARP+
+    cap_add:
+      # need for vpn tunnel things
+      - NET_ADMIN
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+      - net.ipv4.conf.all.src_valid_mark=1
+    volumes:
+      - ./_data/warp:/var/lib/cloudflare-warp
+  dlpy:
+    network_mode: "service:warp"
+    build: dlpy
+    restart: unless-stopped
+    environment:
+      - MY_DOMAIN=${MY_DOMAIN}
+      - SECRET_ENDPOINT=${SECRET_ENDPOINT}
+      - S3_BUCKET=${S3_BUCKET}
+      - S3_ENDPOINT=${S3_ENDPOINT}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+    volumes:
+      - ./_data/public_html:/public_html
+      - ./dlpy/main.py:/app/main.py

@@ -5,6 +5,7 @@ import os
 import subprocess
 from pathlib import Path
 
+import boto3
 from flask import Flask,request
 import yt_dlp
 
@@ -31,8 +32,20 @@ def ss_media(filename, startat):
         print('ss_media failed...', file=sys.stderr)
         pass
 
+def maybe_upload_to_s3(filename):
+    if os.environ.get("S3_BUCKET", "").strip() == "":
+        return
+    s3 = boto3.client('s3', endpoint_url=os.environ["S3_ENDPOINT"])
+    print("starting upload...", file=sys.stderr)
+    s3.upload_file(
+        filename,
+        os.environ["S3_BUCKET"],
+        filename.removeprefix("/public_html/"),
+        ExtraArgs={'ContentType': 'video/ogg'} # probably should be audio/ogg but r2 auto-detected as video/ogg so /shrug
+    )
+
 @app.route(os.environ["SECRET_ENDPOINT"], methods=['POST'])
-def download_as_mp3():
+def download_to_ogg():
     url = request.form['url']
     startat = request.form.get('startat')
     try:
@@ -69,10 +82,10 @@ def download_as_mp3():
             'home': '/public_html/media/',
         },
         'progress_hooks': [my_hook],
+        #'proxy': 'socks5h://warp:1080/', # socks5 or socks5h?
     }
 
     # https://github.com/yt-dlp/yt-dlp?tab=readme-ov-file#embedding-yt-dlp
-    # TODO: Pick a random IPV6 'source_address' for ydl_opts
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         error_code = ydl.download(url)
     if error_code == 0:
@@ -80,9 +93,11 @@ def download_as_mp3():
         if not (startat is None):
             ss_media(last_filename, startat)
             url_path += f'#t={startat}s'
+        maybe_upload_to_s3(last_filename)
         j = {
             'OriginalUrlFromForm': url,
-            'URL': request.host_url + url_path.removeprefix('/public_html/'),
+            #'URL': request.host_url + url_path.removeprefix('/public_html/'),
+            'URL': f'https://{os.environ["MY_DOMAIN"]}/{url_path.removeprefix("/public_html/")}',
             'Title': last_title,
             'Duration': get_media_duration(last_filename),
         }
