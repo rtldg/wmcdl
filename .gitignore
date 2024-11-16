@@ -1,10 +1,13 @@
-public_html/media/*
-!public_html/media/z.txt
+_data/public_html/media/*
+!_data/public_html/media/z.txt
 
-caddy_config/*
-!caddy_config/z.txt
+_data/caddy_config/*
+!_data/caddy_config/z.txt
 
-caddy_data/*
-!caddy_data/z.txt
+_data/caddy_data/*
+!_data/caddy_data/z.txt
 
-.env
+_data/warp/*
+!_data/warp/z.txt
+
+*.env*

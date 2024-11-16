@@ -12,10 +12,10 @@ services:
       - MY_DOMAIN=${MY_DOMAIN}
       - SECRET_ENDPOINT=${SECRET_ENDPOINT}
     volumes:
-      - ./caddy_config:/config
-      - ./caddy_data:/data
+      - ./_data/caddy_config:/config
+      - ./_data/caddy_data:/data
       - ./Caddyfile:/etc/caddy/Caddyfile
-      - ./public_html:/public_html
+      - ./_data/public_html:/public_html
     ports:
       - "80:80"
       - "443:443"
@@ -25,5 +25,5 @@ services:
     environment:
       - SECRET_ENDPOINT=${SECRET_ENDPOINT}
     volumes:
-      - ./public_html:/public_html
+      - ./_data/public_html:/public_html
       - ./dlpy/main.py:/app/main.py
