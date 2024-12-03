@@ -13,6 +13,12 @@ services:
     command: tunnel --no-autoupdate run --protocol http2 --token ${TUNNEL_TOKEN}
   warp:
     image: caomingjun/warp # https://github.com/cmj2002/warp-docker
+    #build:
+    #  context: ../warp-docker
+    #  args:
+    #    - GOST_VERSION=2.11.5
+    #    - WARP_VERSION=2024.11.1
+    #    - COMMIT_SHA=d988156
     restart: always
     # SOCKS5 proxy...
     #ports:
@@ -23,6 +29,8 @@ services:
     cap_add:
       # need for vpn tunnel things
       - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=0
       - net.ipv4.conf.all.src_valid_mark=1
