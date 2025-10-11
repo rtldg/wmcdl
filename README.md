@@ -41,3 +41,14 @@ docker compose build --no-cache dlpy
 # start it back up and detach so it runs in the background
 docker compose up -d
 ```
+
+## wmcdl_restarter
+```sh
+#machinectl shell <USERNAME>@.host
+git clone wmcdl
+cd wmcdl/wmcdl_restarter
+mkdir -p ~/.config/systemd/user
+ln -sf $PWD/wmcdl_restarter.service ~/.config/systemd/user/
+systemctl --user enable wmcdl_restarter.service
+systemctl --user start wmcdl_restarter.service
+```
