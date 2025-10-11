@@ -8,5 +8,6 @@
 	file_server
 	#file_server browse
 	reverse_proxy {$SECRET_ENDPOINT} dlpy:8888
+	reverse_proxy {$SECRET_RESTART_NDPOINT} dlpy:8888
 	#reverse_proxy {$SECRET_ENDPOINT} localhost:8888 # testing things...
 }

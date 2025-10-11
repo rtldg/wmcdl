@@ -107,5 +107,10 @@ def download_to_ogg():
         # POST to discord webhook.
         return '', 500
 
+@app.route(os.environ["SECRET_RESTART_ENDPOINT"], methods=['POST'])
+def restart_me_please():
+    open("/public_html/restart_me_please", "a").close()
+    return '',200
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8888)

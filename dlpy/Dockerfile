@@ -1,7 +1,7 @@
 FROM python:trixie
 WORKDIR /app
 
-RUN apt update -y && apt install ffmpeg
+RUN apt update -y && apt install -y ffmpeg
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

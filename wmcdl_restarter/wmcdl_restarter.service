@@ -1,0 +1,12 @@
+[Unit]
+Description=wmcdl restarter!
+
+[Service]
+Type=Simple
+RestartSec=1
+WorkingDirectory=%h/wmcdl
+ExecStart=/usr/bin/python %h/wmcdl/wmcdl_restarter.py
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
