@@ -4,6 +4,7 @@
 	# if you're using R2 then make this your bucket's subdomain...
 	MY_DOMAIN=your.domain.example.org
 	SECRET_ENDPOINT=/RANDOMSTRINGHERE
+	SECRET_RESTART_ENDPOINT=/ADIFFERENTRANDOMSTRINGHERE
 	#####################################################################
 	### You don't need anything below if you're using old-compose.yml ###
 	#####################################################################
