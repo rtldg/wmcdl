@@ -13,6 +13,7 @@ services:
     command: tunnel --no-autoupdate run --protocol http2 --token ${TUNNEL_TOKEN}
   warp:
     image: caomingjun/warp # https://github.com/cmj2002/warp-docker
+    stop_grace_period: 5s
     #build:
     #  context: ../warp-docker
     #  args:
